@@ -18,6 +18,8 @@ jobs:
   build:
     needs: test
     runs-on: ubuntu-latest
+    outputs:
+      jsfile: ${{ steps.getjs.outputs.jsfile }}
     steps:
       - name: Get code
         uses: actions/checkout@v3
@@ -30,6 +32,13 @@ jobs:
         with:
           name: build-output
           path: dist/
+
+      - name: Get JS filename
+        id: getjs
+        run: |
+          JS_FILE=$(find dist -type f -name "*.js" | head -n 1)
+          echo "Found JS file: $JS_FILE"
+          echo "jsfile=$JS_FILE" >> $GITHUB_OUTPUT
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -41,5 +50,9 @@ jobs:
 
       - name: output contents
         run: ls
+
+      - name: Show JS filename from build job
+        run: echo "JS file from build: ${{ needs.build.outputs.jsfile }}"
+        
       - name: Deploy
         run: echo "Deploying..."
