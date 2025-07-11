@@ -40,9 +40,6 @@ jobs:
         with:
           name: dist-files
           path: dist
-          # path: |
-          #   dist
-          #   package.json
 
   deploy:
     needs: build
@@ -56,6 +53,6 @@ jobs:
       - name: Output contents
         run: ls -R dist
       - name: Output filename
-        run: echo "JS file from build: ${{ needs.build.outputs.script-file }}"
+        run: echo "JS file from build ${{ needs.build.outputs.script-file }}"
       - name: Deploy
         run: echo "Deploying ${{ needs.build.outputs.script-file }}"
