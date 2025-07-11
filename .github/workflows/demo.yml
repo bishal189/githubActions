@@ -1,8 +1,10 @@
 name: Deploy website
+
 on:
   push:
     branches:
       - main
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -15,6 +17,7 @@ jobs:
         run: npm run lint
       - name: Test code
         run: npm run test
+
   build:
     needs: test
     runs-on: ubuntu-latest
@@ -27,18 +30,18 @@ jobs:
         run: npm ci
       - name: Build website
         run: npm run build
-      - name: Download build artifact
+      - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: build-output
           path: dist/
-
       - name: Get JS filename
         id: getjs
         run: |
           JS_FILE=$(find dist -type f -name "*.js" | head -n 1)
           echo "Found JS file: $JS_FILE"
           echo "jsfile=$JS_FILE" >> $GITHUB_OUTPUT
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -47,12 +50,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-output
-
-      - name: output contents
-        run: ls
-
+          path: dist/
       - name: Show JS filename from build job
         run: echo "JS file from build: ${{ needs.build.outputs.jsfile }}"
-        
       - name: Deploy
-        run: echo "Deploying..."
+        run: echo "Deploying ${{ needs.build.outputs.jsfile }}"
