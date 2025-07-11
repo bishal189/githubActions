@@ -23,6 +23,7 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout
+
       - name: Install dependencies
         run: npm ci
       - name: Build website
